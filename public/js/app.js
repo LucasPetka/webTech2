@@ -3245,7 +3245,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       if (confirm('Are You Sure you want to delete "' + foundNode.name + '" Node?')) {
         fetch("api/deleteclass/".concat(id), {
-          method: 'get'
+          method: 'delete'
         }).then(function (res) {
           return res.json();
         }).then(function (data) {

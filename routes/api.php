@@ -19,12 +19,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('getall', 'ClasshController@getAll');
 Route::get('getclass/{id}', 'ClasshController@show');
-Route::get('deleteclass/{id}', 'ClasshController@destroy');
+Route::delete('deleteclass/{id}', 'ClasshController@destroy');
 Route::get('superclasses/{id}', 'ClasshController@superclasses');
 Route::get('subclasses/{id}', 'ClasshController@subclasses');
 Route::get('getsubclasseslist/{id}', 'ClasshController@subclassesList');
 
 
 Route::post('addclass', 'ClasshController@store');
-Route::post('addClassJSON', 'ClasshController@addClassJSON');
+Route::post('addclassesjson', 'ClasshController@addClassJSON');
 Route::put('updateclass', 'ClasshController@store');

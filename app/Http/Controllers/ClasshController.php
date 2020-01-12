@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Request;
 use App\Classh;
 use App\Http\Resources\Classh as ClasshResource;
 use DB;
-use Input;
 
 class ClasshController extends Controller
 {
@@ -14,7 +13,7 @@ class ClasshController extends Controller
     private $subList = [];
 
     //===================================GET ALL=================================================
-    public function getAll(Request $request){
+    public function getAll(Request $request){ 
         
         $classes = Classh::all();
 
@@ -41,7 +40,7 @@ class ClasshController extends Controller
         }
 
 
-        
+        $class->name = $request->input('cid');
         $class->name = $request->input('name');
         $class->pid = $request->input('pid');
         $class->abstract = $request->input('abstract');
@@ -50,6 +49,11 @@ class ClasshController extends Controller
             if (Classh::where('name', '=', $class->name)->exists()) {
                 $name=true;
                 array_push($error_arr,"class name '". $class->name ."' already exists.");
+            }
+
+            if (Classh::where('cid', '=', $class->cid)->exists()) {
+                $cid=true;
+                array_push($error_arr,"cid '". $class->cid ."' already exists.");
             }
 
             if($class->pid != null){
@@ -89,12 +93,137 @@ class ClasshController extends Controller
     //======================================STORE JSON CLASS==========================================
     public function addClassJSON(Request $request)
     {
+        $name=false;
+        $cid=false;
+        $pid=false;
+        $security = true;
+        $error_arr = [];
         
-        $data = Input::all();
-        $data['id']; // The ID of the request
+        $data = Request::all();
 
 
+        if( isset( $data['classes'] ) ){
 
+           $size = count($data['classes']);
+
+           for ($i=0; $i < $size; $i++) { 
+
+            $class = new Classh;
+        
+                try {
+                    $node_cid = $data['classes'][$i]['cid'];
+                    $class->cid = $node_cid;
+                } catch (\Throwable $th) {
+                    $class->cid = null;
+                }
+
+                    $node_name = $data['classes'][$i]['name'];
+                    $node_abstract = $data['classes'][$i]['abstract'];
+
+                    $class->name = $node_name;
+                    $class->abstract = $node_abstract;
+
+                try {
+                    $node_pid = $data['classes'][$i]['pid'];
+                    $class->pid = $node_pid;
+                } catch (\Throwable $th) {
+                    $class->pid = null;
+                }
+
+                    if (Classh::where('name', '=', $class->name)->exists()) {
+                        $name=true;
+                    }
+
+                    if (Classh::where('cid', '=', $class->cid)->exists()) {
+                        $cid=true;
+                    }
+
+                    if($class->pid != null){
+                        if (!Classh::where('cid', '=', $class->pid)->exists()) {
+                            $pid=true;
+                        }
+                    }else{
+                        $class->pid = 0;
+                    }
+
+                    if($name==false && $cid==false && $pid==false){
+                        $class->save();
+                    }else{
+                        return response()->json(["ret"=> "false"]);
+                    }
+           }
+
+           return response()->json(["ret" => "true"]);
+        }
+        else{
+
+            $class = new Classh;
+            
+
+            try {
+                $node_cid = $data['cid'];
+                $class->cid = $node_cid;
+            } catch (\Throwable $th) {
+                $class->cid = null;
+            }
+
+                $node_name = $data['name'];
+                $node_abstract = $data['abstract'];
+
+            try {
+                $node_pid = $data['pid'];
+                $class->pid = $node_pid;
+            } catch (\Throwable $th) {
+                $class->pid = null;
+            }
+
+                $class->name = $data['name'];
+                $class->abstract = $data['abstract'];
+
+
+            if($security){
+                if (Classh::where('name', '=', $class->name)->exists()) {
+                    $name=true;
+                    array_push($error_arr,"class name '". $class->name ."' already exists.");
+                }
+
+                if (Classh::where('cid', '=', $class->cid)->exists()) {
+                    $cid=true;
+                    array_push($error_arr,"cid '". $class->cid ."' already exists.");
+                }
+
+                if($class->pid != null){
+                    if (!Classh::where('cid', '=', $class->pid)->exists()) {
+                        $pid=true;
+                        array_push($error_arr,"pid '". $class->pid ."' not found.");
+                    }
+                }else{
+                    $class->pid = 0;
+                }
+
+                if($name==false && $cid==false && $pid==false){
+                    $class->save();
+                    return response()->json(["ret" => "true"]);
+                }else{
+                    return response()->json([
+                        "ret"=> "false",
+                        "message"=> $error_arr,
+                    ]);
+                }
+
+
+            }else{
+
+                if($class->save()){
+                    return response()->json(["ret" => "true"]);
+                }else{
+                    return response()->json([
+                        "ret"=> "false",
+                        "message"=> "Error",
+                    ]);
+                }
+            }
+        }
     }
 
     

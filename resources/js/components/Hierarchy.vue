@@ -326,7 +326,7 @@
                              this.classSelection.push(classh);
                          }
                 });
-            },
+            },  
 
             menuItemSelected: function(item, node) {
                 if (item.code === 'ADD_CHILD_NODE') {
@@ -413,7 +413,7 @@
                 const foundNode = this.allClasses.find( classh => classh.cid == id);
                 if (confirm('Are You Sure you want to delete "'+ foundNode.name +'" Node?')) {
                     fetch(`api/deleteclass/${id}`, {
-                    method: 'get'
+                    method: 'delete'
                     })
                     .then(res => res.json())
                     .then(data => {
