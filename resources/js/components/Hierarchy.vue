@@ -3,40 +3,45 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card mt-5">
-                    <div class="card-header">Hierarchy trees</div>
+                    <div class="card-header"> <i class="fas fa-stream"></i> Hierarchy trees</div>
 
                     <div class="card-body">
 
+                        <!------------------ Select Main class ------------------>
 
-                        <div class="row mb-2">
-                            <div class="col-12">
-                                <label for="exampleFormControlSelect1">Select which class you want to see:</label>
-                                <div class="input-group">
-                                    <select class="form-control" id="exampleFormControlSelect1" v-model="selectedClass" v-on:change="fetchSubClasses(selectedClass)">
-                                        <option v-for="classh in classSelection" v-bind:key="classh.cid" :value="classh.cid" >{{ classh.name }}</option>
-                                    </select>
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-success align-bottom" data-toggle="modal" data-target="#add_modal">
-                                            <i class="fas fa-plus"></i> Add Node
-                                        </button>
-                                    </div>
-                                </div>
+                        <label for="exampleFormControlSelect1">Select which class set you want to see:</label>
+                        <div class="input-group">
+                            <select class="form-control" id="exampleFormControlSelect1" v-model="selectedClass" v-on:change="fetchSubClasses(selectedClass)">
+                                <option v-for="classh in classSelection" v-bind:key="classh.cid" :value="classh.cid" >{{ classh.name }}</option>
+                            </select>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-success align-bottom" data-toggle="modal" data-target="#add_modal">
+                                    <i class="fas fa-plus"></i> Add Class
+                                </button>
                             </div>
                         </div>
 
-                        <div class="input-group mb-5">
-                            <vue-bootstrap-typeahead placeholder="Search for the class by name"  v-model="superclassName" :data="autoComplete" class="w-75"/>
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" v-on:click="findClass(superclassName)" type="button">Find</button>
+                        <!--------------------- Search input ----------------------->
+                        <div class="mt-3 mb-5">
+                            <vue-bootstrap-typeahead placeholder="Search for the class by name"  v-model="superclassName" :data="autoComplete" class="w-100"/>
+                            <button class="btn btn-primary btn-sm btn-block mt-1" v-on:click="findClass(superclassName)" type="button"> <i class="fas fa-search"></i> Find</button>
+                        </div>
+
+                        <!---------------- Interactive Tree View ------------------->
+
+                         <div id="alert_of_empty" style="display:none;"> 
+                            <div class="alert alert-warning" role="alert">
+                                This class is empty <a data-target="#add_modal" data-toggle="modal" href="#add_modal" class="alert-link">click here</a> if you want to make addition. <br>
+                                Or if you want to get rid of if <a href="#" v-on:click="deleteNode(classCid)" class="alert-link">click here</a>
                             </div>
-                        </div> 
+                         </div>
 
+                        <div id="treee" v-if="subClasses != null  && subClasses.length != 0"> 
+                            <b-tree-view :data="subClasses" :renameNodeOnDblClick="false" :contextMenuItems="items" @contextMenuItemSelect="menuItemSelected" ref="tree"></b-tree-view>
+                        </div>  
+                        
 
-                             <div v-if="subClasses != null  && subClasses.length != 0"> 
-                                <b-tree-view :data="subClasses" :renameNodeOnDblClick="false" :contextMenuItems="items" @contextMenuItemSelect="menuItemSelected" ref="tree"></b-tree-view>
-                             </div>  
-
-                        <!-- Update Modal -->
+                        <!------------------------------------- Update Modal --------------------------------------------->
                         <form @submit.prevent="updateNode">
                             <div class="modal fade" id="update_modal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -76,7 +81,7 @@
                             </div>
                         </form>
 
-                        <!-- Add Modal -->
+                        <!--------------------------------------------- Add Modal ------------------------------------------------>
                         <form @submit.prevent="addNode">
                             <div class="modal fade" id="add_modal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -98,7 +103,7 @@
                                             <label for="node_parent_add">Select Parent</label>
                                             <select name="node_parent" class="form-control" id="node_parent_add" v-model="nodee.pid" required>
                                             <option :value="0" >**Super Parent**</option>
-                                            <option v-for="classh in allClasses" v-bind:key="classh.cid" :value="classh.cid" >{{ classh.name }}</option>
+                                            <option v-for="classh in subClassesList" v-bind:key="classh.cid" :value="classh.cid" >{{ classh.name }}</option>
                                             </select>
                                         </div>
 
@@ -119,35 +124,33 @@
                             </div>
                         </form>
 
-
-
-
-
-
                     </div>
                 </div>
 
-                <h3 class="mt-3"> Parent classes rows </h3>
-                <hr>
+                <!---------------------------------Parent Table show ------------------------------------->
+                <div v-if="itemss.length != 0">
+                    <h3 class="mt-3"> Parent classes rows </h3>
+                    <hr>
 
-                <div class="overflow-auto mt-2">
-                    <b-table
-                    id="my-table"
-                    :items="itemss"
-                    :per-page="perPage"
-                    :current-page="currentPage"
-                    small
-                    ></b-table>
+                    <div class="overflow-auto mt-2">
+                        <b-table
+                        id="my-table"
+                        :items="itemss"
+                        :per-page="perPage"
+                        :current-page="currentPage"
+                        small
+                        ></b-table>
 
-                    <p class="mt-3 text-center">Current Page: {{ currentPage }}</p>
+                        <p class="mt-3 text-center">Current Page: {{ currentPage }}</p>
 
-                    <b-pagination
-                    v-model="currentPage"
-                    :total-rows="rows"
-                    :per-page="perPage"
-                    aria-controls="my-table"
-                    align="center"
-                    ></b-pagination>
+                        <b-pagination
+                        v-model="currentPage"
+                        :total-rows="rows"
+                        :per-page="perPage"
+                        aria-controls="my-table"
+                        align="center"
+                        ></b-pagination>
+                    </div>
                 </div>
 
 
@@ -162,6 +165,7 @@
     export default {
         mounted() {
             this.fetchAllClasses();
+            this.fetchSubClasses(this.selectedClass);
         },
 
         computed: {
@@ -182,6 +186,7 @@
 
                 //Subclasses that are printed by BOOTSTRAP tree
                 subClasses: [],
+                subClassesList:[],
 
                 //All fetched classes
                 allClasses:[],
@@ -198,7 +203,11 @@
                 selectedClass: 1,
 
                 //Context menu buttons
-                items: [ { code: 'DELETE_NODEE', label: 'Delete node' },{ code: 'ADD_CHILD_NODE', label: 'Add child' }, { code: 'UPDATE_NODE', label: 'Update node' } ],
+                items: [{ code: 'ADD_CHILD_NODE', label: 'Add child' }, 
+                        { code: 'UPDATE_NODE', label: 'Update node' },
+                        { code: 'DELETE_NODEE', label: 'Delete node' },
+                        { code: 'SHOW_PARENTS', label: 'Show Parents' },
+                        ],
                 response: [],
                 //selected node by update or delete
                 nodee:{
@@ -225,16 +234,45 @@
                 this.classCid = classId;
                 await axios.get('/api/subclasses/' + classId)
                     .then(response => (this.subClasses = response.data));
+
                     
+                    this.subClassesList = [];
+                    await this.fetchSubClassesList(classId);
+                    
+                    
+                    if(this.subClassesList.length < 2){
+                        $("#alert_of_empty").show();
+                        $("#treee").hide();
+                    }
+                    else{
+                        $("#alert_of_empty").hide();
+                        $("#treee").show();
+                    }
+                    
+
                     this.$refs.tree.nodeMap = undefined;
                     this.$refs.tree.selectedNode = null;
-                    this.$refs.tree.createNodeMap();        //testing class refresh
+                    this.$refs.tree.createNodeMap();      
             },
+
+             
+            fetchSubClassesList: async function(id){
+                
+                await axios.get('/api/getsubclasseslist/' + id)
+                    .then(response => (this.subClassesList = response.data));
+
+            },
+
 
             fetchSuperClasses: async function(classId){
                 this.superClasses = [];
+                this.itemss = [];
+
                 await axios.get('/api/superclasses/' + classId)
                     .then(response => (this.superClasses = response.data));
+
+                    await this.fetchSubClasses(this.superClasses.list[this.superClasses.list.length-1].cid);
+                    this.selectedClass = this.superClasses.list[this.superClasses.list.length-1].cid;
 
                     this.superClasses.list.forEach(classh => {
                         this.itemss.push({Name : classh.name, Parent : this.getParentNameById(classh.pid)})
@@ -255,37 +293,34 @@
                         }
                     });         
 
-                    console.log(this.superClasses);
                     saveClass.select();     
-                
             },
 
 
             fillAutoComplete: async function(){
+                this.autoComplete = [];
                 this.allClasses.forEach(classh => {
                     this.autoComplete.push(classh.name);
                 });
             },
 
             findClass: function(superclassName){
-
                 this.allClasses.forEach(classh => {
                     if(classh.name === superclassName){
                         this.fetchSuperClasses(classh.cid);
                     }
                 });
-
             },
 
             fetchAllClasses: async function(){
                 await axios.get('/api/getall')
                     .then(response => (this.allClasses = response.data));
-
                  this.fillClassSelect();
                  this.fillAutoComplete();
             },
 
             fillClassSelect: async function(){
+                this.classSelection = [];
                  this.allClasses.forEach(classh => {
                          if(classh.pid == 0){
                              this.classSelection.push(classh);
@@ -308,6 +343,12 @@
                 else if (item.code === 'DELETE_NODEE') {
                     this.deleteNode(node.data.id);
                 }
+                else if (item.code === 'SHOW_PARENTS') {
+                    this.findClass(node.data.name);
+                }
+
+
+
             },
 
             getParentNameById: function(id){
@@ -343,7 +384,7 @@
 
             addNode: function(){
                 fetch('api/addclass', {
-                method: 'post',
+                method: 'POST',
                 body: JSON.stringify(this.nodee),
                 headers: {
                     'content-type': 'application/json'
@@ -372,7 +413,7 @@
                 const foundNode = this.allClasses.find( classh => classh.cid == id);
                 if (confirm('Are You Sure you want to delete "'+ foundNode.name +'" Node?')) {
                     fetch(`api/deleteclass/${id}`, {
-                    method: 'delete'
+                    method: 'get'
                     })
                     .then(res => res.json())
                     .then(data => {

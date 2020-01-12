@@ -17,14 +17,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('classes', 'ClasshController@index');
-
 Route::get('getall', 'ClasshController@getAll');
 Route::get('getclass/{id}', 'ClasshController@show');
-Route::delete('deleteclass/{id}', 'ClasshController@destroy');
+Route::get('deleteclass/{id}', 'ClasshController@destroy');
 Route::get('superclasses/{id}', 'ClasshController@superclasses');
 Route::get('subclasses/{id}', 'ClasshController@subclasses');
+Route::get('getsubclasseslist/{id}', 'ClasshController@subclassesList');
 
 
 Route::post('addclass', 'ClasshController@store');
+Route::post('addClassJSON', 'ClasshController@addClassJSON');
 Route::put('updateclass', 'ClasshController@store');

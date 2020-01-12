@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Classh;
 use App\Http\Resources\Classh as ClasshResource;
 use DB;
+use Input;
 
 class ClasshController extends Controller
 {
+
+    private $subList = [];
 
     //===================================GET ALL=================================================
     public function getAll(Request $request){
@@ -38,7 +41,7 @@ class ClasshController extends Controller
         }
 
 
-        //$class->cid = $request->input('cid');
+        
         $class->name = $request->input('name');
         $class->pid = $request->input('pid');
         $class->abstract = $request->input('abstract');
@@ -48,11 +51,6 @@ class ClasshController extends Controller
                 $name=true;
                 array_push($error_arr,"class name '". $class->name ."' already exists.");
             }
-            
-            /*if (Classh::where('cid', '=', $class->cid)->exists()) {
-                $cid=true;
-                array_push($error_arr,"cid '". $class->cid ."' already exists.");
-            }*/
 
             if($class->pid != null){
                 if (!Classh::where('cid', '=', $class->pid)->exists()) {
@@ -88,6 +86,17 @@ class ClasshController extends Controller
         }
     }
 
+    //======================================STORE JSON CLASS==========================================
+    public function addClassJSON(Request $request)
+    {
+        
+        $data = Input::all();
+        $data['id']; // The ID of the request
+
+
+
+    }
+
     
     //======================================SHOW CLASS==========================================
     public function show($id)
@@ -108,29 +117,6 @@ class ClasshController extends Controller
         }
 
     }
-
-    //=======================================UPDATE CLASS========================================
-
-    public function update(Request $request)
-    {
-        $class = Classh::find($id);
-        if($class){
-            return response()->json([
-                "cid" => $class->cid,
-                "name" => $class->name,
-                "abstract" => $class->abstract
-            ]);
-        }
-        else{
-            return response()->json([
-                "ret"=> "false",
-                "message"=> "cid ". $id ." does not exist"
-            ]);
-        }
-
-    }
-
-
 
 
     //======================================DELETE CLASS==========================================
@@ -202,6 +188,40 @@ class ClasshController extends Controller
                 "ret"=> "false",
                 "message"=> "cid ". $id ." does not exist"
             ]);
+        }
+    }
+
+    //======================================SUB CLASSES LIST==========================================
+    public function subclassesList($id)
+    {
+        $classes = Classh::all()->toArray(); // get all classes
+        $class = Classh::find($id);
+        $subArray = [];
+
+        array_push($this->subList,[
+            'cid'=>$class->cid,
+            'pid'=>$class->pid,
+            'name'=>$class->name
+            ]);
+
+            $this->subclassesListGenerate($id);
+           
+            return $this->subList;
+    }
+
+    public function subclassesListGenerate($id)
+    {
+        $subclasses = DB::table('Classes')->where('pid', $id)->get();
+
+        if($subclasses){
+            foreach ($subclasses as $value){ 
+                array_push($this->subList,[
+                    'cid'=>$value->cid,
+                    'pid'=>$value->pid,
+                    'name'=>$value->name
+                    ]);
+                $this->subclassesListGenerate($value->cid);
+            } 
         }
     }
 
