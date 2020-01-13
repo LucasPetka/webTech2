@@ -27,6 +27,13 @@
                             <button class="btn btn-primary btn-sm btn-block mt-1" v-on:click="findClass(superclassName)" type="button"> <i class="fas fa-search"></i> Find</button>
                         </div>
 
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Info!</strong> Press mouse right-click on nodes to open ContextMenu.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+
                         <!---------------- Interactive Tree View ------------------->
 
                          <div id="alert_of_empty" style="display:none;"> 

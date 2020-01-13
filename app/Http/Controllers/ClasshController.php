@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Request;
+use Illuminate\Http\Request;
+use Request as Arequest;
 use App\Classh;
 use App\Http\Resources\Classh as ClasshResource;
 use DB;
@@ -99,7 +100,7 @@ class ClasshController extends Controller
         $security = true;
         $error_arr = [];
         
-        $data = Request::all();
+        $data = Arequest::all();
 
 
         if( isset( $data['classes'] ) ){

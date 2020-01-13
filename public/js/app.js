@@ -2851,6 +2851,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
     this.fetchAllClasses();
@@ -72965,6 +72972,8 @@ var render = function() {
               1
             ),
             _vm._v(" "),
+            _vm._m(2),
+            _vm._v(" "),
             _c(
               "div",
               {
@@ -73077,7 +73086,7 @@ var render = function() {
                               [_vm._v(_vm._s(_vm.nodee.name))]
                             ),
                             _vm._v(" "),
-                            _vm._m(2)
+                            _vm._m(3)
                           ]),
                           _vm._v(" "),
                           _c("div", { staticClass: "modal-body" }, [
@@ -73195,7 +73204,7 @@ var render = function() {
                             ])
                           ]),
                           _vm._v(" "),
-                          _vm._m(3)
+                          _vm._m(4)
                         ])
                       ]
                     )
@@ -73235,7 +73244,7 @@ var render = function() {
                       },
                       [
                         _c("div", { staticClass: "modal-content" }, [
-                          _vm._m(4),
+                          _vm._m(5),
                           _vm._v(" "),
                           _c("div", { staticClass: "modal-body" }, [
                             _c("div", { staticClass: "form-group" }, [
@@ -73401,7 +73410,7 @@ var render = function() {
                             ])
                           ]),
                           _vm._v(" "),
-                          _vm._m(5)
+                          _vm._m(6)
                         ])
                       ]
                     )
@@ -73493,6 +73502,36 @@ var staticRenderFns = [
         ]
       )
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass: "alert alert-success alert-dismissible fade show",
+        attrs: { role: "alert" }
+      },
+      [
+        _c("strong", [_vm._v("Info!")]),
+        _vm._v(
+          " Press mouse right-click on nodes to open ContextMenu.\n                    "
+        ),
+        _c(
+          "button",
+          {
+            staticClass: "close",
+            attrs: {
+              type: "button",
+              "data-dismiss": "alert",
+              "aria-label": "Close"
+            }
+          },
+          [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+        )
+      ]
+    )
   },
   function() {
     var _vm = this
